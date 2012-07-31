@@ -23,11 +23,24 @@ void draw_pixel(SDL_Surface *surface, int x, int y, Uint32 color) {
 }
 
 
+void swap(int *i, int *j) {
+        int t = *i;
+        *i = *j;
+        *j = t;
+}
+
+
 void draw_line(SDL_Surface *surface, point_t cord1, point_t cord2, Uint32 color)
 {
         // bresenham line
         int x1 = cord1.x, y1 = cord1.y,
-            x2 = cord2.x, y2 = cord2.y;
+            x2 = cord2.x, y2 = cord2.y,
+            steep = (y2 - y1) / (x2 - x1) > 1;
+
+        if (steep) {
+                swap(&x1, &y1);
+                swap(&x2, &y2);
+        }
 
         int dx = fabs(x2 - x1),
             dy = fabs(y2 - y1),
@@ -35,7 +48,12 @@ void draw_line(SDL_Surface *surface, point_t cord1, point_t cord2, Uint32 color)
             e = 0;
 
         for (x; x < x2; x++) {
-                draw_pixel(surface, x, y, color);
+                if (steep) {
+                        draw_pixel(surface, y, x, color);
+                } else {
+                        draw_pixel(surface, x, y, color);
+                }
+
                 if ((e + dy) << 1 < dx){
                         e = e + dy;
                 } else {
@@ -54,8 +72,9 @@ int main(int argc, char *args[])
         Uint32 black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
         Uint32 white = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
         point_t cord1 = {0,0};
-        point_t cord2 = {320, -1};
-        //point_t cord2 = {-1, 320};
+        point_t cord2 = {80, 320};
+        point_t cord3 = {320, 80};
+        point_t cord4 = {320, 320};
 
         while (!quit) {
                 SDL_PumpEvents();
@@ -66,10 +85,10 @@ int main(int argc, char *args[])
 
                 SDL_FillRect(screen, NULL, white);
 
-                cord2.y++;
                 SDL_LockSurface(screen);
-                //draw_line(screen, cord1.x, cord2.x, cord1.y, cord2.y, black);
                 draw_line(screen, cord1, cord2, black);
+                draw_line(screen, cord1, cord3, black);
+                draw_line(screen, cord1, cord4, black);
                 SDL_UnlockSurface(screen);
                 SDL_UpdateRect(screen, 0, 0, 0, 0);
                 SDL_Delay(10);
