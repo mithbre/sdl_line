@@ -43,6 +43,11 @@ void draw_line(SDL_Surface *surface, point_t cord1, point_t cord2, Uint32 color)
                 swap(&x2, &y2);
         }
 
+        if (x1 > x2) {
+                swap(&x1,&x2);
+                swap(&y1,&y2);
+        }
+
         if (y1 < y2) {
                 inc = 1;
         }
@@ -52,14 +57,14 @@ void draw_line(SDL_Surface *surface, point_t cord1, point_t cord2, Uint32 color)
             y = y1, x = x1,
             e = 0;
 
-        for (x; x < x2; x++) {
+        for (x; x <= x2; x++) {
                 if (steep) {
                         draw_pixel(surface, y, x, color);
                 } else {
                         draw_pixel(surface, x, y, color);
                 }
 
-                if ((e + dy) << 1 < dx){
+                if ((e + dy) << 1 < dx) {
                         e = e + dy;
                 } else {
                         y += inc;
@@ -77,18 +82,17 @@ int main(int argc, char *args[])
         Uint32 black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
         Uint32 white = SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF);
         point_t corner0 = {0,0};
-        point_t corner1 = {320, 0};
-        point_t corner2 = {320, 320};
-        point_t corner3 = {0, 320};
+        point_t corner1 = {319, 0};
+        point_t corner2 = {319, 319};
+        point_t corner3 = {0, 319};
 
         // top left to bottom right
-        point_t octet1 = {80, 320};
-        point_t octet2 = {320, 80};
+        point_t octet1 = {79, 319};
+        point_t octet2 = {319, 79};
 
         // top right to bottom left
-        point_t octet3 = {160, 320};
-        point_t octet4 = {80, 80};
-
+        point_t octet3 = {239, 319};
+        point_t octet4 = {0, 79};
 
         while (!quit) {
                 SDL_PumpEvents();
